@@ -30,6 +30,31 @@ export const AppReducer = (state, action) => {
                     ...state
                 }
             }
+            case 'DECREASE_EXPENSE':
+                total_budget = 0;
+                total_budget = state.expenses.reduce(
+                    (previousExp, currentExp) => {
+                        return previousExp + currentExp.cost
+                    },0);
+                total_budget = total_budget - action.payload.cost;
+                action.type = "DONE";
+                if(total_budget <= state.budget) {
+                    total_budget = 0;
+                    state.expenses.map((currentExp)=> {
+                        if(currentExp.name === action.payload.name) {
+                            currentExp.cost = currentExp.cost-action.payload.cost ;
+                        }
+                        return currentExp
+                    });
+                    return {
+                        ...state,
+                    };
+                } else {
+                    alert("Cannot increase the allocation! Out of funds");
+                    return {
+                        ...state
+                    }
+                }
             case 'RED_EXPENSE':
                 const red_expenses = state.expenses.map((currentExp)=> {
                     if (currentExp.name === action.payload.name && currentExp.cost - action.payload.cost >= 0) {
@@ -86,7 +111,7 @@ const initialState = {
         { id: "Human Resource", name: 'Human Resource', cost: 40 },
         { id: "IT", name: 'IT', cost: 500 },
     ],
-    currency: '£'
+    currency:'£'
 };
 
 // 2. Creates the context this is the thing our components import and use to get the state
